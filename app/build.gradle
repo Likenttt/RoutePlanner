@@ -41,4 +41,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.amap.api:3dmap:6.4.1'
     compile 'com.amap.api:search:6.1.0'
+    compile 'com.amap.api:location:4.3.0'
+
 }

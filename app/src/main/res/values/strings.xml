@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">RoutePlanner</string>
     <string name="no_result">对不起，没有搜索到相关数据！</string>
+    <string name="hint_in_search_bar">请输入搜索地点...</string>
 </resources>

@@ -3,26 +3,44 @@
     package="com.amap.walkroute">
 
     <uses-sdk android:targetSdkVersion="23" />
-    <!-- 允许打开网络套接字 -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- 打开 GPS 功能 -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- 允许sd卡写入 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- 读取手机状态和身份 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <!-- 改变系统设置 -->
-    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
-    <!--  -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <!-- 修改设置 -->
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <!-- 获取网络状态 -->
+    <!-- Normal Permissions 不需要运行时注册 -->
+    <!-- 获取运营商信息，用于支持提供运营商信息相关的接口 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- 获取wifi状态 -->
+    <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
 
+    <!-- 请求网络 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- 不是SDK需要的权限，是示例中的后台唤醒定位需要的权限 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- 需要运行时注册的权限 -->
+    <!-- 用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- 用于访问GPS定位 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- 用于提高GPS定位速度 -->
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <!-- 写入扩展存储，向扩展卡写入数据，用于写入缓存定位数据 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- 读取缓存数据 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- 用于读取手机当前的状态 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <!-- 更改设置 -->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
+    <!-- 3.2.0版本增加 -->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <!-- 3.2.0版本增加 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+
 
     <application
         android:allowBackup="true"
@@ -34,6 +52,10 @@
             android:name="com.amap.api.v2.apikey"
             android:value="50fc3fe6ac70ed6fc88219f1f25d4d35" />
 
+        <service android:name="com.amap.api.location.APSService">
+
+        </service>
+
         <!--<activity android:name=".WalkRouteActivity">-->
         <!--<intent-filter>-->
         <!--<action android:name="android.intent.action.MAIN" />-->
@@ -41,9 +63,7 @@
         <!--<category android:name="android.intent.category.LAUNCHER" />-->
         <!--</intent-filter>-->
         <!--</activity>-->
-        <activity
-            android:name=".WalkRouteDetailActivity"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".PoiActivity"
             android:screenOrientation="portrait">
@@ -53,9 +73,15 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".InputTipsActivity"
-            android:screenOrientation="portrait">
-        </activity>
+
+        <activity
+            android:name=".WalkRouteDetailActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".InputTipsActivity"
+            android:screenOrientation="portrait"></activity>
+
     </application>
 
 </manifest>

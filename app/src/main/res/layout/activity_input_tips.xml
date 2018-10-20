@@ -37,7 +37,7 @@
             android:singleLine="true"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
-            app:queryHint="请输入关键字"
+            app:queryHint="@string/hint_in_search_bar"
             app:searchIcon="@null" />
     </LinearLayout>
 
