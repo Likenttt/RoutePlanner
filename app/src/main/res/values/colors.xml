@@ -15,7 +15,7 @@
     <color name="transparent">#00000000</color>
 
 
-    <color name="header_toast_bg">#ccebfc</color>
+    <color name="header_toast_bg">#c3e6fa</color>
     <color name="header_toast">#024ca1</color>
     <color name="header_toast_line">#abdaf4</color>
     <color name="offline_down_title">#909090</color>

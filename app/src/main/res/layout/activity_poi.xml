@@ -66,4 +66,31 @@
         android:paddingBottom="0dp"
         android:scaleType="fitXY"
         android:src="@mipmap/gps_fixed_button" />
+
+    <Button
+        android:id="@+id/generate_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="61dp"
+        android:layout_marginLeft="61dp"
+        android:layout_marginBottom="7dp"
+        android:background="@color/header_toast_bg"
+        android:text="生成路线" />
+
+    <Button
+        android:id="@+id/erase_marker_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/generate_button"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="63dp"
+        android:layout_marginRight="63dp"
+        android:layout_marginBottom="0dp"
+        android:background="@color/header_toast_bg"
+        android:text="擦除标记" />
+
 </RelativeLayout>

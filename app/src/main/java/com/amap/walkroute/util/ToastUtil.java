@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package com.amap.walkroute.util;
 
 import android.content.Context;
