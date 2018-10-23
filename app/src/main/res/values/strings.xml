@@ -2,4 +2,8 @@
     <string name="app_name">RoutePlanner</string>
     <string name="no_result">对不起，没有搜索到相关数据！</string>
     <string name="hint_in_search_bar">请输入搜索地点...</string>
+    <string name="notifyTitle">权限不足警告</string>
+    <string name="notifyMsg">请授予所需权限，否则程序将退出</string>
+    <string name="cancel">取消</string>
+    <string name="setting">确定</string>
 </resources>

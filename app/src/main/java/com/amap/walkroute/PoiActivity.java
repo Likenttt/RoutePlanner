@@ -1,22 +1,32 @@
 package com.amap.walkroute;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.AMapOptions;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.SupportMapFragment;
+import com.amap.api.maps.model.AMapGestureListener;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
+import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.core.SuggestionCity;
@@ -29,9 +39,9 @@ import com.amap.walkroute.util.ToastUtil;
 
 import java.util.List;
 
-public class PoiActivity extends FragmentActivity implements
+public class PoiActivity extends CheckPermissionsActivity implements ActivityCompat.OnRequestPermissionsResultCallback,
         AMap.OnMarkerClickListener, AMap.InfoWindowAdapter,
-        PoiSearch.OnPoiSearchListener, View.OnClickListener {
+        PoiSearch.OnPoiSearchListener, View.OnClickListener ,AMap.OnMapClickListener {
 
     private AMap mAMap;
     private String mKeyWords = "";// 要输入的poi搜索关键字
@@ -46,6 +56,8 @@ public class PoiActivity extends FragmentActivity implements
     private ImageView mCleanKeyWords;
     private ImageButton mLocateMine;
 
+    String string;
+
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
 
@@ -54,15 +66,24 @@ public class PoiActivity extends FragmentActivity implements
     public static final int RESULT_CODE_KEYWORDS = 102;
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        //可在此继续其他操作。
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_poi);
         mLocateMine = (ImageButton) findViewById(R.id.location_bt);
         mLocateMine.setOnClickListener(this);
 
-
         mCleanKeyWords = (ImageView) findViewById(R.id.clean_keywords);
         mCleanKeyWords.setOnClickListener(this);
+        initLocation();   //初始化定位x
+        locationClient.startLocation();
         init();
         mKeyWords = "";
     }
@@ -81,12 +102,17 @@ public class PoiActivity extends FragmentActivity implements
         if (mAMap == null) {
             mAMap = ((SupportMapFragment) this.getSupportFragmentManager()
                     .findFragmentById(R.id.map)).getMap();
-
-            setUpMap();
         }
+        setUpMap();
         mKeywordsTextView = (TextView) findViewById(R.id.main_keywords);
         mKeywordsTextView.setOnClickListener(this);
+
     }
+
+//    private void setmAMap(){
+//        AMapLocation location =  locationClient.getLastKnownLocation();
+//        mAMap.setPointToCenter((int)location.getLongitude(),(int)location.getAltitude());
+//    }
 
     /**
      * 设置页面监听
@@ -94,7 +120,18 @@ public class PoiActivity extends FragmentActivity implements
     private void setUpMap() {
         mAMap.setOnMarkerClickListener(this);// 添加点击marker监听事件
         mAMap.setInfoWindowAdapter(this);// 添加显示infowindow监听事件
+        mAMap.setOnMapClickListener(this);//添加点击地图的事件监听
+
         mAMap.getUiSettings().setRotateGesturesEnabled(false);
+        mAMap.getUiSettings().setLogoPosition(AMapOptions.LOGO_MARGIN_RIGHT);
+        mAMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
+        MyLocationStyle myLocationStyle;
+        myLocationStyle = new MyLocationStyle();//初始化定位蓝点样式类myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);//连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）如果不设置myLocationType，默认也会执行此种模式。
+        myLocationStyle.interval(2000); //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
+        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);//定位一次，且将视角移动到地图中心点。
+        mAMap.setMyLocationStyle(myLocationStyle);//设置定位蓝点的Style
+        mAMap.setMyLocationEnabled(true);// 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
     }
 
     /**
@@ -140,6 +177,8 @@ public class PoiActivity extends FragmentActivity implements
     @Override
     public boolean onMarkerClick(Marker marker) {
         marker.showInfoWindow();
+
+        ToastUtil.show(getApplicationContext(),marker.getTitle());
         return false;
     }
 
@@ -200,8 +239,7 @@ public class PoiActivity extends FragmentActivity implements
                             && suggestionCities.size() > 0) {
                         showSuggestCity(suggestionCities);
                     } else {
-                        ToastUtil.show(PoiActivity.this,
-                                R.string.no_result);
+                        ToastUtil.show(PoiActivity.this, R.string.no_result);
                     }
                 }
             } else {
@@ -219,6 +257,8 @@ public class PoiActivity extends FragmentActivity implements
         // TODO Auto-generated method stub
 
     }
+
+
 
     /**
      * 输入提示activity选择结果后的处理逻辑
@@ -294,14 +334,17 @@ public class PoiActivity extends FragmentActivity implements
                 break;
             case R.id.location_bt:
                 //todo: 定位
-                ToastUtil.show(PoiActivity.this, "点击定位按钮");
-                initLocation();
-//                locationClient.
+                //ToastUtil.show(PoiActivity.this, "点击定位按钮");
+                //ToastUtil.show(PoiActivity.this, string);
+                setUpMap();
                 break;
             default:
+                String id = v.getId() +  " ";
+                Log.i("POIACTIVITY", "onClick: id "+ id);
                 break;
         }
     }
+
 
     /**
      * 初始化定位
@@ -316,7 +359,7 @@ public class PoiActivity extends FragmentActivity implements
         //设置定位参数
         locationClient.setLocationOption(locationOption);
         // 设置定位监听
-        //locationClient.setLocationListener(locationListener);
+        locationClient.setLocationListener(locationListener);
     }
 
     /**
@@ -345,14 +388,14 @@ public class PoiActivity extends FragmentActivity implements
     /**
      * 定位监听
      */
-//    AMapLocationListener locationListener = new AMapLocationListener() {
-//        @Override
-//        public void onLocationChanged(AMapLocation location) {
+    AMapLocationListener locationListener = new AMapLocationListener() {
+        @Override
+        public void onLocationChanged(AMapLocation location) {
 //            if (null != location) {
 //
 //                StringBuffer sb = new StringBuffer();
 //                //errCode等于0代表定位成功，其他的为定位失败，具体的可以参照官网定位错误码说明
-//                if(location.getErrorCode() == 0){
+//                if (location.getErrorCode() == 0) {
 //                    sb.append("定位成功" + "\n");
 //                    sb.append("定位类型: " + location.getLocationType() + "\n");
 //                    sb.append("经    度    : " + location.getLongitude() + "\n");
@@ -379,28 +422,28 @@ public class PoiActivity extends FragmentActivity implements
 //                    sb.append("错误描述:" + location.getLocationDetail() + "\n");
 //                }
 //                sb.append("***定位质量报告***").append("\n");
-//                sb.append("* WIFI开关：").append(location.getLocationQualityReport().isWifiAble() ? "开启":"关闭").append("\n");
+//                sb.append("* WIFI开关：").append(location.getLocationQualityReport().isWifiAble() ? "开启" : "关闭").append("\n");
 //                sb.append("* GPS星数：").append(location.getLocationQualityReport().getGPSSatellites()).append("\n");
 //                sb.append("* 网络类型：" + location.getLocationQualityReport().getNetworkType()).append("\n");
 //                sb.append("* 网络耗时：" + location.getLocationQualityReport().getNetUseTime()).append("\n");
 //                sb.append("****************").append("\n");
 //
 //                String result = sb.toString();
-//                tvResult.setText(result);
+//                ToastUtil.show(PoiActivity.this, result);
+//                //tvResult.setText(result);
 //            } else {
-//                tvResult.setText("定位失败，loc is null");
+//                ToastUtil.show(PoiActivity.this, "定位失败，Location is null");
 //            }
-//        }
-//    };
+        }
+    };
 
     /**
      * 停止定位
      *
-     * @since 2.8.0
      * @author hongming.wang
-     *
+     * @since 2.8.0
      */
-    private void stopLocation(){
+    private void stopLocation() {
         // 停止定位
         locationClient.stopLocation();
     }
@@ -408,11 +451,10 @@ public class PoiActivity extends FragmentActivity implements
     /**
      * 销毁定位
      *
-     * @since 2.8.0
      * @author hongming.wang
-     *
+     * @since 2.8.0
      */
-    private void destroyLocation(){
+    private void destroyLocation() {
         if (null != locationClient) {
             /**
              * 如果AMapLocationClient是在当前Activity实例化的，
@@ -424,4 +466,11 @@ public class PoiActivity extends FragmentActivity implements
         }
     }
 
+    @Override
+    public void onMapClick(LatLng latLng) {
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.visible(true);
+        mAMap.addMarker(markerOptions);
+    }
 }

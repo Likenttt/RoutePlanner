@@ -41,7 +41,6 @@
     <!-- 3.2.0版本增加 -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -52,36 +51,33 @@
             android:name="com.amap.api.v2.apikey"
             android:value="50fc3fe6ac70ed6fc88219f1f25d4d35" />
 
-        <service android:name="com.amap.api.location.APSService">
+        <service android:name="com.amap.api.location.APSService"></service>
 
-        </service>
+        <!-- <activity android:name=".WalkRouteActivity"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.MAIN" /> -->
 
-        <!--<activity android:name=".WalkRouteActivity">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="android.intent.action.MAIN" />-->
 
-        <!--<category android:name="android.intent.category.LAUNCHER" />-->
-        <!--</intent-filter>-->
-        <!--</activity>-->
+        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+        <!-- </intent-filter> -->
+        <!-- </activity> -->
 
         <activity
             android:name=".PoiActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
         <activity
             android:name=".WalkRouteDetailActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".InputTipsActivity"
-            android:screenOrientation="portrait"></activity>
-
+            android:screenOrientation="portrait" />
+        <activity android:name=".StartAndEndActivity"></activity>
     </application>
 
 </manifest>
